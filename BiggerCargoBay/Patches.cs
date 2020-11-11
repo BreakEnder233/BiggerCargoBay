@@ -83,21 +83,34 @@ namespace BiggerCargoBay
         [HarmonyPatch("UpdateRemainingResources")]
         public class SpaceDestinationMassPatch
         {
-            public static bool Prefix(CargoBay bay)
-            {
-                return !BiggerCargoBayConfiguration.Instance.ResetPlanetMass;
-            }
-
             public static void Postfix(SpaceDestination __instance, CargoBay bay)
             {
-                if (!BiggerCargoBayConfiguration.Instance.ResetPlanetMass) return;
                 var traverse = Traverse.Create(__instance);
                 SpaceDestinationType destinationType = __instance.GetDestinationType();
                 traverse.SetField("availableMass", destinationType.maxiumMass - __instance.CurrentMass);
             }
         }
 
-        /*
+        [HarmonyPatch(typeof(CargoBay))]
+        [HarmonyPatch("SpawnResources")]
+        public class CargoBayPatch
+        {
+            public static void Prefix(CargoBay __instance)
+            {
+                Debug.Log($"BCBC : Capacity: {__instance.storage.RemainingCapacity()}");
+            }
+
+            public static void Postfix()
+            {
+                
+            }
+        }
+
+
+
+
+
+        
         [HarmonyPatch(typeof(SpaceDestination))]
         [HarmonyPatch("GetMissionResourceResult")]
         public class SpaceDestinationResourcePatch
@@ -107,7 +120,7 @@ namespace BiggerCargoBay
                 bool liquids = true,
                 bool gasses = true)
             {
-                return !BiggerCargoBayConfiguration.Instance.DontChangeRemainMass;
+                return false;
             }
 
             public static void Postfix(
@@ -118,7 +131,6 @@ namespace BiggerCargoBay
                 bool liquids = true,
                 bool gasses = true)
             {
-                if (!BiggerCargoBayConfiguration.Instance.DontChangeRemainMass) return;
                 Dictionary<SimHashes, float> dictionary = new Dictionary<SimHashes, float>();
                 float num1 = 0.0f;
                 foreach (KeyValuePair<SimHashes, float> recoverableElement in __instance.recoverableElements)
@@ -132,12 +144,12 @@ namespace BiggerCargoBay
                     if (ElementLoader.FindElementByHash(recoverableElement.Key).IsSolid & solids || ElementLoader.FindElementByHash(recoverableElement.Key).IsLiquid & liquids || ElementLoader.FindElementByHash(recoverableElement.Key).IsGas & gasses)
                     {
                         float num3 = num2 * (__instance.GetResourceValue(recoverableElement.Key, recoverableElement.Value) / num1);
-                        dictionary.Add(recoverableElement.Key, 1000f);
+                        dictionary.Add(recoverableElement.Key, num3);
                     }
                 }
                 __result = dictionary;
             }
         }
-        */
+        
     }
 }

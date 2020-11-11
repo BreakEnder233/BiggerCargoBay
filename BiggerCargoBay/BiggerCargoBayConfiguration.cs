@@ -26,17 +26,12 @@ namespace BiggerCargoBay
         [JsonProperty]
         public int GasCargoBayCapacity { get; set; }
 
-        [Option("Always Reset Planet Mass", "Reset Planet Mass after mission complete")]
-        [JsonProperty]
-        public bool ResetPlanetMass { get; set; }
-
 
         public BiggerCargoBayConfiguration()
         {
             CargoBayCapacity = 10000;
             LiquidCargoBayCapacity = 5000;
             GasCargoBayCapacity = 2000;
-            ResetPlanetMass = false;
         }
     }
 }
